@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/property")
 public class PropertyController {
@@ -25,6 +26,7 @@ public class PropertyController {
     @GetMapping("/getPropertyType")
     public ResponseEntity<List<PropertyTypeDTO>> getPropertyType(){
         List<PropertyTypeDTO> propertyTypeDTOS = propertyTypeService.getPropertyTypes();
+        System.out.println("inside getPropertyType");
         return ResponseEntity.ok(propertyTypeDTOS);
     }
 
@@ -47,6 +49,7 @@ public class PropertyController {
 
     @GetMapping("/getAllProperty")
     public ResponseEntity<List<PropertyDTO>> getAllProperty() {
+
         List<PropertyDTO> propertyDTOS = propertyService.getAllProperties();
         return ResponseEntity.ok(propertyDTOS);
     }
@@ -79,4 +82,5 @@ public class PropertyController {
     public void addProperty(@RequestBody PropertyDTO propertyDTO) {
         propertyService.addProperty(propertyDTO);
     }
+
 }

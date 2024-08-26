@@ -3,17 +3,22 @@ package com.rentahome.service.implement;
 import java.util.Optional;
 
 import com.rentahome.dto.UserDTO;
+import com.rentahome.entity.CustomUserDetails;
 import com.rentahome.service.Converter;
 import com.rentahome.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.rentahome.entity.User;
 import com.rentahome.repository.UserRepository;
 import org.springframework.web.client.RestTemplate;
+import com.rentahome.helper.JwtProvider;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
 	UserRepository userRepository;
 
@@ -22,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	RestTemplate restTemplate;
+
+	@Autowired
+	JwtProvider jwtProvider;
 
 	private static final String RESERVATION_SERVICE = "http://localhost:8081";
 
@@ -60,15 +68,23 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
+//	@Override
+//	public UserDTO login(String name, String password) {
+//		Optional<User> existingUserOpt = Optional.ofNullable(userRepository.findByNameAndPassword(name, password));
+//		if (!existingUserOpt.isPresent()) {
+//			return null;
+//		}
+//		User user = existingUserOpt.get();
+//		UserDTO dto = converter.coverToDTO(user);
+//		return dto;
+//	}
+
 	@Override
-	public UserDTO login(String name, String password) {
-		Optional<User> existingUserOpt = Optional.ofNullable(userRepository.findByNameAndPassword(name, password));
-		if (!existingUserOpt.isPresent()) {
-			return null;
-		}
-		User user = existingUserOpt.get();
-		UserDTO dto = converter.coverToDTO(user);
-		return dto;
+	public String login(String username, String password){
+		UserDetails userDetails = this.loadUserByUsername(username);
+		String token = null;
+		token = jwtProvider.generateToken(userDetails);
+		return token;
 	}
 
 	@Override
@@ -81,4 +97,16 @@ public class UserServiceImpl implements UserService {
 		return converter.coverToDTO(user);
 	}
 
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+//		Optional<User> existingUserOpt = Optional.ofNullable(userRepository.findByNameAndPassword(username, password));
+		Optional<User> existingUserOpt = Optional.ofNullable(userRepository.findByName(username));
+		if (!existingUserOpt.isPresent()) {
+			return null;
+		}
+		User user = existingUserOpt.get();
+
+		return new CustomUserDetails(user);
+	}
 }

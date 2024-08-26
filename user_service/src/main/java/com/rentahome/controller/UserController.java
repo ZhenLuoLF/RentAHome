@@ -28,8 +28,12 @@ public class UserController {
 		userService.deleteUser(userId);
 	}
 
+//	@GetMapping("/login")
+//	public UserDTO login(@RequestParam("name") String name, @RequestParam("password") String password) {
+//		return userService.login(name, password);
+//	}
 	@GetMapping("/login")
-	public UserDTO login(@RequestParam("name") String name, @RequestParam("password") String password) {
+	public String login(@RequestParam("name") String name, @RequestParam("password") String password) {
 		return userService.login(name, password);
 	}
 
