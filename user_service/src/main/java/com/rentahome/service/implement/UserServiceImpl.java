@@ -1,5 +1,6 @@
 package com.rentahome.service.implement;
 
+import java.util.Map;
 import java.util.Optional;
 
 import com.rentahome.dto.UserDTO;
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //	}
 
 	@Override
-	public String login(String username, String password){
+	public String generateToken(String username, String password){
 		UserDetails userDetails = this.loadUserByUsername(username);
 		String token = null;
 		token = jwtProvider.generateToken(userDetails);
@@ -95,6 +96,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		User user = UserOpt.get();
 		return converter.coverToDTO(user);
+	}
+
+	@Override
+	public UserDTO getUserByNameAndPasswords(String username, String password){
+		Optional<User> existingUserOpt = Optional.ofNullable(userRepository.findByNameAndPassword(username, password));
+		if (!existingUserOpt.isPresent()) {
+			return null;
+		}
+		User user = existingUserOpt.get();
+		UserDTO dto = converter.coverToDTO(user);
+		return dto;
 	}
 
 	@Override

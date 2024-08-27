@@ -28,10 +28,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/property/**")  // Ignore CSRF protection for API endpoints
+                        .ignoringRequestMatchers("/users/**")
                 )
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/property/getAllProperty").permitAll()
                         .requestMatchers("/property/getPropertyType").permitAll()
+                        .requestMatchers("/users/**").permitAll()
                         .anyRequest().authenticated()  // All other requests require authentication
                 )
                 .addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)

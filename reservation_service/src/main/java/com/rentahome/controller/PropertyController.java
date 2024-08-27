@@ -61,6 +61,8 @@ public class PropertyController {
 
     @GetMapping("/getOwnerProperty/{ownerId}")
     public ResponseEntity<List<PropertyDTO>> getOwnerProperty(@PathVariable Integer ownerId) {
+        System.out.println("Inseid the controler");
+
         List<PropertyDTO> propertyDTOS = propertyService.getOwnerProperties(ownerId);
         return ResponseEntity.ok(propertyDTOS);
     }

@@ -6,7 +6,10 @@ import com.rentahome.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -33,8 +36,19 @@ public class UserController {
 //		return userService.login(name, password);
 //	}
 	@GetMapping("/login")
-	public String login(@RequestParam("name") String name, @RequestParam("password") String password) {
-		return userService.login(name, password);
+	public Map<String, Object>  login(@RequestParam("username") String name, @RequestParam("password") String password) {
+
+		String token = null;
+		token = userService.generateToken(name, password);
+		Map<String, Object> response = new HashMap<>();
+		response.put("token", token);
+
+		UserDTO userDTO = new UserDTO();
+		userDTO = userService.getUserByNameAndPasswords(name, password);
+
+		response.put("user", userDTO);
+
+		return response;
 	}
 
 	@PutMapping("/updateUser/{userId}")
